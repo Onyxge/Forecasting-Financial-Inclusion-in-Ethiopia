@@ -8,18 +8,15 @@
 
 ---
 
-## 📌 1. Business Need & Problem Statement
+## 1. Project Goal and Business Context
 
-### The "Data Desert" Paradox
-Ethiopia is undergoing a massive digital financial transformation, driven by the launch of **Telebirr (2021)**, the entry of **M-Pesa (2023)**, and aggressive government policy reforms (Fuel Payment Mandate).
+### The Problem
 
-However, official data sources (World Bank Findex) lag significantly behind this reality. The last official survey (2022) depicts a **stagnant financial inclusion rate (~46%)**, missing the explosion of **60 Million+** digital wallet accounts opened between 2021 and 2024.
+Official financial inclusion data for Ethiopia (World Bank Global Findex) is sparse and outdated. The most recent official survey (2022) reports a stagnant account ownership rate of approximately **46 percent**, failing to capture the structural break introduced by the launch of **Telebirr (2021)** and **M-Pesa (2023)**. These platforms collectively onboarded more than **60 million users within four years**, creating a major disconnect between official inclusion metrics and observed digital financial behavior.
 
-**The Business Problem:**
-Policymakers and investors cannot rely on historical linear trends to forecast Ethiopia's financial future because the market has undergone a **structural break**. Traditional models predict stagnation, while reality suggests a boom.
+### The Solution
 
-**The Solution:**
-This project builds an **Event-Augmented Forecasting Engine** that bridges the gap between sparse official data and high-frequency market signals. We use proxy indicators (operator data) and structural impact modeling to generate a realistic forecast for **2025–2027**.
+This project develops a custom **Event-Augmented Forecasting Engine**. By enriching sparse survey-based indicators with high-frequency proxy data from mobile money operators and embedding causal impact rules, the system produces realistic forecasts for **2025–2027** that explicitly account for Ethiopia’s recent digital payments boom.
 
 ---
 
@@ -82,24 +79,106 @@ To improve forecast accuracy in Phase 2, we recommend:
 
 ---
 
-## 🛠️ Installation & Usage
+## 3. Environment Setup
 
-1.  **Clone the Repo:**
-    ```bash
-    git clone [https://github.com/your-username/ethiopia-fi-forecast.git](https://github.com/your-username/ethiopia-fi-forecast.git)
-    cd ethiopia-fi-forecast
-    ```
+### Clone the Repository
 
-2.  **Install Dependencies:**
-    ```bash
-    pip install pandas numpy matplotlib seaborn scipy statsmodels scikit-learn
-    ```
+```bash
+git clone https://github.com/your-username/ethiopia-fi-forecast.git
+cd ethiopia-fi-forecast
+```
 
-3.  **Run the Pipeline:**
-    * **Enrichment:** `python src/task1_enrich.py`
-    * **EDA:** Open `notebooks/Task_2_EDA.ipynb`
-    * **Impact Modeling:** `python src/task3_impact.py`
-    * **Forecasting:** Open `notebooks/Task_4_Forecast.ipynb`
+### Create a Virtual Environment (Recommended)
+
+```bash
+python -m venv venv
+source venv/bin/activate
+# On Windows: venv\Scripts\activate
+```
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 4. Usage Guide
+
+The pipeline is modular and should be executed in the following order.
+
+### Step 1: Data Enrichment (Task 1)
+
+Injects missing events (Telebirr, M-Pesa) and high-frequency proxy indicators into the raw dataset.
+
+```bash
+python src/task1_enrich.py
+```
+
+**Output:**
+
+* `data/processed/ethiopia_fi_enriched.csv`
+
+---
+
+### Step 2: Exploratory Data Analysis (Task 2)
+
+Open `notebooks/Task_2_EDA.ipynb` to analyze the **Inclusion Paradox**: stagnant official access metrics versus explosive digital usage growth.
+
+---
+
+### Step 3: Impact Modeling (Task 3)
+
+Applies causal rules that translate discrete events into directional pressure on inclusion indicators.
+
+```bash
+python src/task3_impact.py
+```
+
+**Output:**
+
+* `data/processed/ethiopia_fi_modeled.csv`
+
+---
+
+### Step 4: Forecasting (Task 4)
+
+Open `notebooks/Task_4_Forecast.ipynb` to generate forecasts for **2025–2027** using a five-model ensemble approach combining:
+
+* Trend regression
+* External drivers
+* Saturation-aware growth
+* Ratio-based nowcasting
+* Scenario analysis
+
+---
+
+## 5. Unified Schema Reference
+
+The project uses a strict unified schema to merge surveys, events, and causal rules.
+
+| Field              | Description                                   | Allowed Values or Examples                                   |
+| ------------------ | --------------------------------------------- | ------------------------------------------------------------ |
+| `record_type`      | Defines the function of the row               | `observation`, `event`, `impact_link`, `target`              |
+| `pillar`           | Financial inclusion dimension                 | `ACCESS`, `USAGE`, `INFRASTRUCTURE`                          |
+| `indicator_code`   | Unique metric identifier                      | `ACC_OWNERSHIP`, `USG_TELEBIRR_USERS`, `EVT_TELEBIRR_LAUNCH` |
+| `value_numeric`    | Numeric value of the indicator                | `46.0` (%), `54.0` (millions), `30.2` (inflation)            |
+| `impact_magnitude` | Strength of causal effect (impact links only) | `High`, `Medium`, `Low`                                      |
+| `lag_months`       | Delay before impact materializes              | `0`, `6`, `12`                                               |
+| `confidence`       | Reliability of the source                     | `High`, `Medium`, `Low`                                      |
+
+---
+
+## 6. Data Sources
+
+The enriched dataset draws from the following sources:
+
+* **World Bank Global Findex**: Historical account ownership (2014, 2017, 2022)
+* **Ethio Telecom (Audited Reports)**: Telebirr user counts and transaction metrics
+* **Safaricom Ethiopia**: M-Pesa adoption statistics
+* **National Bank of Ethiopia**: Policy events, regulatory changes, inflation data
+* **GSMA**: Mobile connectivity and digital infrastructure benchmarks
 
 ---
 
@@ -119,8 +198,6 @@ To improve forecast accuracy in Phase 2, we recommend:
 ├── src/
 │   ├── task1_enrich.py           # Script: Data injection and schema validation
 │   └── task3_impact.py           # Script: Causal rules engine (Intervention modeling)
-│
-├── docs/
 │   ├── data_enrichment_log.md    # Audit trail of manual data additions (Task 1)
 │   └── task_3_modeling_notes.md  # Documentation of model assumptions & logic (Task 3)
 │
