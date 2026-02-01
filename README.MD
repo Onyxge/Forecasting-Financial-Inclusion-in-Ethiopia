@@ -104,3 +104,26 @@ To improve forecast accuracy in Phase 2, we recommend:
 ---
 
 ## 📂 Project Structure
+```
+├── data/
+│   ├── raw/                      # Original sparse Findex data
+│   ├── processed/
+│   │   ├── ethiopia_fi_enriched.csv  # Output of Task 1 (Enriched with 8 new records)
+│   │   ├── ethiopia_fi_modeled.csv   # Output of Task 3 (Includes causal impact links)
+│   │   └── ethiopia_fi_forecast_final.csv # Final predictions (2025-2027)
+│
+├── notebooks/
+│   ├── Task_2_EDA.ipynb          # Exploratory Analysis: The "Inclusion Paradox"
+│   └── Task_4_Forecast.ipynb     # The 5-Model Forecasting Ensemble
+│
+├── src/
+│   ├── task1_enrich.py           # Script: Data injection and schema validation
+│   └── task3_impact.py           # Script: Causal rules engine (Intervention modeling)
+│
+├── docs/
+│   ├── data_enrichment_log.md    # Audit trail of manual data additions (Task 1)
+│   └── task_3_modeling_notes.md  # Documentation of model assumptions & logic (Task 3)
+│
+├── README.md                     # Project documentation
+└── requirements.txt              # Python dependencies
+```
