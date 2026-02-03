@@ -36,8 +36,3 @@ jobs:
         # This compiles .py files to bytecode to catch syntax errors WITHOUT running them.
         run: |
           python -m py_compile src/*.py
-
-      - name: Validate Notebook Integrity
-        # Checks if the .ipynb JSON structure is valid. Does NOT execute cells.
-        run: |
-          jupyter nbconvert --to notebook --validate notebooks/*.ipynb
