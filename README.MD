@@ -52,6 +52,14 @@ The project was executed in four rigorous phases:
     4.  **Ratio Nowcasting:** Using Telebirr proxy to fix the 2025 starting point.
     5.  **Scenario Synthesis:** Combining all above into Pessimistic, Base, and Optimistic futures.
 
+### **Task 5: Dashboard Development**
+* **Goal:** Translate static forecasts into a dynamic decision-support tool for non-technical stakeholders.
+* **Action:** We built an interactive **Streamlit** application (`src/app_dashboard.py`) with four strategic modules:
+    * **Executive Overview:** Real-time tracking of the "Digital Crossover" and key KPIs.
+    * **Trends Analysis:** Interactive time-series plots with date filtering to isolate the 2021–2024 digital boom.
+    * **Forecast Story:** A tabbed narrative visualizing the divergence between the "Stagnation" baseline and the "Digital Dividend."
+    * **Policy Simulator:** A "What-If" engine allowing users to adjust **Telebirr Penetration** and **Fuel Mandate Compliance** to test the feasibility of the 60% Consortium Target.
+* **Outcome:** A deployed dashboard that proves the National Target is achievable *only* through aggressive digital integration.
 ---
 
 ## 📊 3. Key Limitations
@@ -153,6 +161,26 @@ Open `notebooks/Task_4_Forecast.ipynb` to generate forecasts for **2025–2027**
 * Scenario analysis
 
 ---
+## step 5. Interactive Dashboard (Task 5)
+
+The project includes a **Streamlit Executive Dashboard** that allows stakeholders to visualize trends, explore forecasts, and simulate policy interventions.
+
+### **How to Run**
+1.  **Install Dashboard Dependencies:**
+    ```bash
+    pip install streamlit plotly
+    ```
+
+2.  **Launch the App:**
+    ```bash
+    streamlit run src/app.py
+    ```
+
+### **Dashboard Features**
+* **Overview:** High-level KPIs (Access Rate, Digital User Base) and "Digital Crossover" metrics.
+* **Trends:** Interactive time-series plots with a **Date Range Slider** to filter historical data.
+* **Forecast Story:** A tabbed narrative showing the evolution from "Stagnation" (Baseline) to the "Digital Dividend" (Optimistic).
+* **Policy Simulator:** An interactive tool to adjust levers (Telebirr Penetration, Fuel Mandate Compliance) and test if the **60% Consortium Target** is achievable.
 
 ## 5. Unified Schema Reference
 
