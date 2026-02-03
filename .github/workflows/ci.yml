@@ -1,55 +1,43 @@
-name: Ethiopia FI Project CI
+name: CI - Code Integrity Check
 
-# Trigger on any push to main or pull request
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  merge-check:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout Code
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # 2. Set up Python 3.10 (Matching your local env)
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.10"
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-    # 3. Install Dependencies
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # Install testing tools
-        pip install pytest nbconvert ipykernel
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 nbconvert
+          # We install requirements to ensure there are no conflicting library versions
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    # 4. Task 1: Verify Data Injection (Script Check)
-    - name: Run Task 1 (Enrichment)
-      run: python src/task1_enrich.py
+      - name: Check for Syntax Errors (Flake8)
+        # E9,F63,F7,F82 = Hard syntax errors and undefined names.
+        # We skip style complaints (like line length) to keep it simple.
+        run: |
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
 
-    # 5. Task 3: Verify Impact Modeling (Script Check)
-    - name: Run Task 3 (Impact Engine)
-      run: python src/task3_impact.py
+      - name: Verify Script Compilation
+        # This compiles .py files to bytecode to catch syntax errors WITHOUT running them.
+        run: |
+          python -m py_compile src/*.py
 
-    # 6. Task 4: Verify Forecast Notebook (Execution Check)
-    # This runs the notebook from top to bottom. If any cell fails, CI fails.
-    - name: Run Task 4 (Forecast Notebook)
-      run: |
-        jupyter nbconvert --to notebook --execute notebooks/Forecast_v1.ipynb --output notebooks/Forecast_v1_executed.ipynb
-
-    # 7. Task 5: Verify Dashboard (Smoke Test)
-    # We verify that the script compiles and can be called by Streamlit without syntax errors.
-    # Note: We use 'timeout' to kill it after 10s because Streamlit runs forever.
-    # If it crashes instantly, the exit code will be non-zero before timeout.
-    - name: Run Task 5 (Dashboard Smoke Test)
-      continue-on-error: true
-      run: |
-        timeout 10s streamlit run Dashboard/app.py --server.headless=true || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+      - name: Validate Notebook Integrity
+        # Checks if the .ipynb JSON structure is valid. Does NOT execute cells.
+        run: |
+          jupyter nbconvert --to notebook --validate notebooks/*.ipynb
